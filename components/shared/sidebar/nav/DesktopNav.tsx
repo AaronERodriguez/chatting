@@ -1,6 +1,7 @@
 "use client"
 
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/ui/theme/theme-toggle';
@@ -19,7 +20,6 @@ const DesktopNav = () => {
         <nav>
             <ul className='flex flex-col items-center gap-4'>{
                 paths.map((path, id) => {
-                    console.log(path.icon)
                     return <li key={id} className='relative'>
                         <Link href={path.href}>
                             <Tooltip>
@@ -27,6 +27,7 @@ const DesktopNav = () => {
                                     <Button size="icon" variant={path.active ? "default" : 'outline'}>
                                         {path.icon}
                                     </Button>
+                                    {path.count ? <Badge className='absolute left-6 bottom-7 px-2'>{path.count}</Badge> : null}
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>{path.name}</p>

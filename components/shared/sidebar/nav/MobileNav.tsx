@@ -1,6 +1,7 @@
 "use client"
 
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ThemeToggle } from '@/components/ui/theme/theme-toggle';
@@ -24,7 +25,6 @@ const MobileNav = () => {
         <nav className='w-full'>
             <ul className='flex justify-evenly items-center'>{
                 paths.map((path, id) => {
-                    console.log(path.icon)
                     return <li key={id} className='relative'>
                         <Link href={path.href}>
                             <Tooltip>
@@ -32,6 +32,9 @@ const MobileNav = () => {
                                     <Button size="icon" variant={path.active ? "default" : 'outline'}>
                                         {path.icon}
                                     </Button>
+                                    {
+                                        path.count ? <Badge className='absolute left-7 bottom-6'>{path.count}</Badge> : null
+                                    }
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p>{path.name}</p>
