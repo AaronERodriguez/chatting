@@ -28,7 +28,7 @@ export default defineSchema({
         memberId: v.id("users"),
         conversationId: v.id("conversations"),
         lastSeenMessage: v.optional(v.id("messages"))
-    }).index("by_memberId", ["memberId"]).index("by_conversationId", ["conversationId"]).index("by_memberId_conversation_id", ["memberId", "conversationId"]),
+    }).index("by_memberId", ["memberId"]).index("by_conversationId", ["conversationId"]).index("by_memberId_conversationId", ["memberId", "conversationId"]),
     messages: defineTable({
         senderId: v.id("users"),
         conversationId: v.id("conversations"),
