@@ -19,7 +19,7 @@ const ConversationsLayout = ({children}: Props) => {
     <>
       <ItemList title='Conversations' action={<CreateGroupDialog />}>{
           conversations ? conversations.length === 0 ? <p className='w-full h-full flex items-center justify-center'>No conversations found</p> : conversations.map(conversation => {
-            return conversation.conversation.isGroup ? <GroupConversationItem key={conversation.conversation._id} id={conversation.conversation._id} name={conversation.conversation.name || ""} lastMessageContent={conversation.lastMessage?.content} lastMessageSender={conversation.lastMessage?.sender} /> : <DMConversationItem key={conversation.conversation._id} id={conversation.conversation._id} username={conversation.otherMember?.username || ""} imageUrl={conversation.otherMember?.imageUrl || ""} lastMessageContent={conversation.lastMessage?.content} lastMessageSender={conversation.lastMessage?.sender}/>
+            return conversation.conversation.isGroup ? <GroupConversationItem key={conversation.conversation._id} id={conversation.conversation._id} name={conversation.conversation.name || ""} lastMessageContent={conversation.lastMessage?.content} lastMessageSender={conversation.lastMessage?.sender} unseenCount={conversation.unseenCount} /> : <DMConversationItem key={conversation.conversation._id} id={conversation.conversation._id} username={conversation.otherMember?.username || ""} imageUrl={conversation.otherMember?.imageUrl || ""} lastMessageContent={conversation.lastMessage?.content} lastMessageSender={conversation.lastMessage?.sender} unseenCount={conversation.unseenCount}/>
           }) : <Loader2 />
         }</ItemList>
       {children}

@@ -52,6 +52,7 @@ export const get = query({args: {
                 }
 
                 return {
+                    _id: member._id,
                     username: member.username
                 }
             })))

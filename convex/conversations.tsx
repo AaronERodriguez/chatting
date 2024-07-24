@@ -36,8 +36,14 @@ export const get = query({args: {},
 
             const lastMessage = await getLastMessageDetails({ctx, id: conversation.lastMessageId})
 
+            const lastSeenMessage = conversationMemberships[index].lastSeenMessage ? await ctx.db.get(conversationMemberships[index].lastSeenMessage!) : null
+
+            const lastSeenMessageTime = lastSeenMessage ? lastSeenMessage._creationTime : -1;
+
+            const unseenMessages = await ctx.db.query("messages").withIndex("by_conversationId", q => q.eq("conversationId", conversation._id)).filter(q => q.gt(q.field("_creationTime"), lastSeenMessageTime)).filter(q => q.neq(q.field("senderId"), currentUser._id)).collect();
+
             if (conversation.isGroup) {
-                return {conversation, lastMessage}
+                return {conversation, lastMessage, unseenCount: unseenMessages.length }
             } else {
                 const otherMembership = allConversationMemberships.filter(membership => membership.memberId !== currentUser._id)[0];
 
@@ -46,7 +52,8 @@ export const get = query({args: {},
                 return {
                     conversation,
                     otherMember,
-                    lastMessage
+                    lastMessage,
+                    unseenCount: unseenMessages.length
                 }
             }
         }))
