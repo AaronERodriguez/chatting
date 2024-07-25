@@ -28,7 +28,7 @@ export const get = query({args: {},
                 throw new ConvexError("Conversation not found")
             }
 
-            return conversation
+            return {...conversation, notification: membership.notification}
         }));
 
         const conversationsWithDetails = await Promise.all(conversations.map( async (conversation, index) => {
@@ -43,7 +43,7 @@ export const get = query({args: {},
             const unseenMessages = await ctx.db.query("messages").withIndex("by_conversationId", q => q.eq("conversationId", conversation._id)).filter(q => q.gt(q.field("_creationTime"), lastSeenMessageTime)).filter(q => q.neq(q.field("senderId"), currentUser._id)).collect();
 
             if (conversation.isGroup) {
-                return {conversation, lastMessage, unseenCount: unseenMessages.length }
+                return {conversation, lastMessage, unseenCount: unseenMessages.length, notification: conversation.notification}
             } else {
                 const otherMembership = allConversationMemberships.filter(membership => membership.memberId !== currentUser._id)[0];
 
@@ -53,7 +53,8 @@ export const get = query({args: {},
                     conversation,
                     otherMember,
                     lastMessage,
-                    unseenCount: unseenMessages.length
+                    unseenCount: unseenMessages.length,
+                    notification: conversation.notification
                 }
             }
         }))
