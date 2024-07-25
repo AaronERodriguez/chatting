@@ -3,12 +3,11 @@
 import SidebarWrapper from '@/components/shared/sidebar/SidebarWrapper'
 import { api } from '@/convex/_generated/api'
 import { useQuery } from 'convex/react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import sendNotification from '../_helper/sendNotification'
 import { useMutationState } from '@/hooks/useMutationState'
 import { useConversation } from '@/hooks/useConversation'
-import { UAParser } from 'ua-parser-js'
-import { headers } from 'next/headers'
+import { isMobileDevice } from '@/hooks/isMobileDevice'
 
 type Props = React.PropsWithChildren<{}>
 
@@ -20,14 +19,8 @@ const Layout = ({children}: Props) => {
 
   const {conversationId} = useConversation();
 
-  const {get} = headers()
-
-  const ua = get('user-agent')
-
-  const device = new UAParser(ua || '').getDevice()
-
   useEffect(() => {
-    if (device.type === 'mobile') {
+    if (isMobileDevice()) {
       return
     } else {
       if ("serviceWorker" in navigator) {
@@ -53,7 +46,7 @@ const Layout = ({children}: Props) => {
   }, [])
 
   useEffect(() => {
-    if (device.type === 'mobile') {
+    if (isMobileDevice()) {
       return
     } else {
       conversations?.map(conversation => {
