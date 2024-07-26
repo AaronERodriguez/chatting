@@ -7,7 +7,7 @@ import React, { useEffect } from 'react'
 import sendNotification from '../_helper/sendNotification'
 import { useMutationState } from '@/hooks/useMutationState'
 import { useConversation } from '@/hooks/useConversation'
-import { isMobileDevice } from '@/hooks/isMobileDevice'
+import { useClientMediaQuery } from '@/hooks/useMobileDevice'
 
 type Props = React.PropsWithChildren<{}>
 
@@ -17,10 +17,12 @@ const Layout = ({children}: Props) => {
 
   const conversations = useQuery(api.conversations.get)
 
-  const {conversationId} = useConversation();
+  const {conversationId, isActive} = useConversation();
+
+  const isMobile = useClientMediaQuery('(max-width: 600px)')
 
   useEffect(() => {
-    if (isMobileDevice()) {
+    if (isMobile) {
       return
     } else {
       if ("serviceWorker" in navigator) {
@@ -46,7 +48,7 @@ const Layout = ({children}: Props) => {
   }, [])
 
   useEffect(() => {
-    if (isMobileDevice()) {
+    if (isMobile) {
       return
     } else {
       conversations?.map(conversation => {
