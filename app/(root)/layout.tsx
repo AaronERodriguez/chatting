@@ -7,7 +7,7 @@ import React, { useEffect } from 'react'
 import sendNotification from '../_helper/sendNotification'
 import { useMutationState } from '@/hooks/useMutationState'
 import { useConversation } from '@/hooks/useConversation'
-import { useClientMediaQuery } from '@/hooks/useMobileDevice'
+import {isMobile} from "react-device-detect"
 
 type Props = React.PropsWithChildren<{}>
 
@@ -18,8 +18,6 @@ const Layout = ({children}: Props) => {
   const conversations = useQuery(api.conversations.get)
 
   const {conversationId, isActive} = useConversation();
-
-  const isMobile = useClientMediaQuery('(max-width: 600px)')
 
   useEffect(() => {
     if (isMobile) {
@@ -51,6 +49,7 @@ const Layout = ({children}: Props) => {
     if (isMobile) {
       return
     } else {
+      console.log("not mobile")
       conversations?.map(conversation => {
         if (conversation.lastMessage && conversation.unseenCount > 0 && conversation.notification === false && conversationId !== conversation.conversation._id) {
           setNotified({conversationId: conversation.conversation._id})
