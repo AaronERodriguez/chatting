@@ -19,6 +19,8 @@ const Layout = ({children}: Props) => {
 
   const {conversationId, isActive} = useConversation();
 
+  const isMobile = useClientMediaQuery('(max-width: 600px)')
+
   useEffect(() => {
     if (isMobile) {
       return
