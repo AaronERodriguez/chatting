@@ -7,19 +7,23 @@ import { useConversation } from '@/hooks/useConversation'
 import { useMutationState } from '@/hooks/useMutationState'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ConvexError } from 'convex/values'
-import React, { useRef } from 'react'
+import React, { Dispatch, SetStateAction, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from '@/components/ui/button'
-import { SendHorizonal } from 'lucide-react'
+import { PlusCircle, SendHorizonal } from 'lucide-react'
 
 const chatMessageSchema = z.object({
   content: z.string().min(1, {message: "This field can't be empty"})
 })
 
-const ChatInput = () => {
+type Props = {
+  setUploadImageDialogOpen: Dispatch<SetStateAction<boolean>>
+}
+
+const ChatInput = ({setUploadImageDialogOpen}: Props) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const {conversationId} = useConversation();
   const {mutate: createMessage, pending} = useMutationState(api.message.create)
@@ -56,6 +60,9 @@ const ChatInput = () => {
       <div className='flex gap-2 items-end w-full'>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className='flex gap-2 items-end w-full'>
+            <Button size={"icon"} onClick={() => setUploadImageDialogOpen(true)} type='button'>
+              <PlusCircle />
+            </Button>
             <FormField control={form.control} name='content' render={({field}) => {
               return <FormItem className='h-full w-full'>
                 <FormControl>

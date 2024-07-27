@@ -35,5 +35,9 @@ export default defineSchema({
         conversationId: v.id("conversations"),
         type: v.string(),
         content: v.array(v.string())
-    }).index("by_conversationId", ["conversationId"])
+    }).index("by_conversationId", ["conversationId"]),
+    images: defineTable({
+        storageId: v.string(),
+        userId: v.id("users")
+    }).index("by_userId", ["userId"])
 });

@@ -44,3 +44,55 @@ export const create = mutation({
         return message;
     }
 })
+
+export const generateUploadUrl = mutation({
+    args: {
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+
+        if(!identity) {
+            throw new Error("Unauthorized")
+        }
+
+        const currentUser = await getUsersByClerkId({ctx, clerkId: identity.subject});
+
+
+        if (!currentUser) {
+            throw new ConvexError("User not found")
+        }
+
+        return await ctx.storage.generateUploadUrl();
+    }
+})
+
+export const saveStorageIds = mutation({
+    args: {
+        storageIds: v.array(
+            v.object({
+                storageId: v.string(),
+            })
+        )
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+
+        if(!identity) {
+            throw new Error("Unauthorized")
+        }
+
+        const currentUser = await getUsersByClerkId({ctx, clerkId: identity.subject});
+
+
+        if (!currentUser) {
+            throw new ConvexError("User not found")
+        }
+
+        args.storageIds.map(({ storageId }) => {
+            ctx.db.insert("images", {
+                storageId: storageId,
+                userId: currentUser._id
+            })
+        })
+    }
+})

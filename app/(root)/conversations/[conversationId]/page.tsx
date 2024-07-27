@@ -12,6 +12,7 @@ import ChatInput from './_components/input/ChatInput'
 import RemoveFriendDialog from './_components/dialogs/RemoveFriendDialog'
 import DeleteGroupDialog from './_components/dialogs/DeleteGroupDialog'
 import LeaveGroupDialog from './_components/dialogs/LeaveGroupDialog'
+import UploadImageDialog from './_components/dialogs/UploadImageDialog'
 
 type Props = {
   params: {
@@ -25,6 +26,7 @@ function ConversationPage({params: {conversationId}} : Props) {
   const [removeFriendDialogOpen, setRemoveFriendDialogOpen] = useState(false)
   const [deleteGroupDialogOpen, setDeleteGroupDialogOpen] = useState(false)
   const [leaveGroupDialogOpen, setLeaveGroupDialogOpen] = useState(false)
+  const [uploadImageDialogOpen, setUploadImageDialogOpen] = useState(false)
   const [callType, setCallType] = useState<"audio" | "video" | null>(null);
 
   return conversation === undefined ? <div className='w-full h-full flex items-center justify-center'>
@@ -34,6 +36,7 @@ function ConversationPage({params: {conversationId}} : Props) {
     <RemoveFriendDialog conversationId={conversationId} open={removeFriendDialogOpen} setOpen={setRemoveFriendDialogOpen} />
     <LeaveGroupDialog conversationId={conversationId} open={leaveGroupDialogOpen} setOpen={setLeaveGroupDialogOpen} />
     <DeleteGroupDialog conversationId={conversationId} open={deleteGroupDialogOpen} setOpen={setDeleteGroupDialogOpen} />
+    <UploadImageDialog conversationId={conversationId} open={uploadImageDialogOpen} setOpen={setUploadImageDialogOpen} />
     <Header imageUrl={conversation.isGroup ? undefined : conversation.otherMember?.imageUrl} name={(conversation.isGroup ? conversation.name : conversation.otherMember?.username) || ""} options={conversation.isGroup ? [
     {label: "Leave Group",
       destructive: false,
@@ -49,7 +52,7 @@ function ConversationPage({params: {conversationId}} : Props) {
       onClick: () => setRemoveFriendDialogOpen(true)
     }]} />
     <Body members={conversation.isGroup ? conversation.otherMembers ? conversation.otherMembers : [] : conversation.otherMember ? [conversation.otherMember] : []} />
-    <ChatInput />
+    <ChatInput setUploadImageDialogOpen={setUploadImageDialogOpen} />
   </ConversationContainer>
 }
 
