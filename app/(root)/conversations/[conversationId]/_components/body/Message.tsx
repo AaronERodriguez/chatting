@@ -35,7 +35,7 @@ const Message = ({fromCurrentUser, senderImage, senderName, lastByUser, content,
             })}>
                 {type === "text" ? <p className='text-wrap break-words whitespace-pre-wrap break-all'>{content}</p> : type === 'images' ? <div className='flex flex-col justify-center items-center'>
                     {content.map(image => {
-                    return <img src={image} className='w-60 ' />
+                    return <img key={image} src={image} className='w-60 ' />
                 }) }
                 </div> : null}
                 <p className={cn("text-xs flex w-full my-1", {
