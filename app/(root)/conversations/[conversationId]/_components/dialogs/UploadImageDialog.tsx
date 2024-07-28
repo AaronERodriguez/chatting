@@ -8,6 +8,8 @@ import { toast } from 'sonner';
 import {UploadDropzone, UploadFileResponse} from "@xixixao/uploadstuff/react"
 import { useMutation, useQuery } from 'convex/react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useMutationState } from '@/hooks/useMutationState';
+import { ConvexError } from 'convex/values';
 
 type Props = {
     conversationId: Id<"conversations">;
@@ -18,10 +20,23 @@ type Props = {
 const UploadImageDialog = ({conversationId, open, setOpen}: Props) => {
     const generateUploadUrl = useMutation(api.message.generateUploadUrl);
     const saveStorageId = useMutation(api.message.saveStorageIds);
+    const {mutate: createMessage, pending} = useMutationState(api.message.create)
 
-    const [selected, setSelected] = useState<string>("");
+    const [selected, setSelected] = useState<string[] | null>([]);
 
     const images = useQuery(api.images.get);
+
+    const toggleSelection = (storageId: string) => {
+        if (selected?.includes(storageId)) {
+            setSelected((prev) => {
+                return prev!.filter(id => id !== storageId)
+            })
+        } else {
+            setSelected((prev) => {
+                return [...prev!, storageId]
+            })
+        }
+    }
     
     const saveAfterUpload = async (uploaded: UploadFileResponse[]) => {
         await saveStorageId({
@@ -29,8 +44,20 @@ const UploadImageDialog = ({conversationId, open, setOpen}: Props) => {
             storageId: (response as any).storageId,
           })),
         });
+        setSelected([]);
       };
-    
+
+      const handleSendImage = async () => {
+        createMessage({
+            conversationId,
+            type: "images",
+            content: [...selected!]
+        }).then(() => {
+            setOpen(false);
+        }).catch((error) => {
+            toast.error(error instanceof ConvexError ? error.data : "Unexpected error occurred")
+        })
+      }
 
     return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -57,7 +84,7 @@ const UploadImageDialog = ({conversationId, open, setOpen}: Props) => {
                         <CarouselContent>        
                             {images.map(image => {
                                 return <CarouselItem key={image.id}>
-                                    <img src={image.url!} className={`h-52 ${image.storageId === selected ? "border rounded-lg border-primary" : ""}`} onClick={(e) => setSelected(image.storageId)}/>
+                                    <img src={image.url!} className={`h-52 ${selected?.includes(image.url!) ? "border rounded-lg border-primary" : ""}`} onClick={() => toggleSelection(image.url!)}/>
                                 </CarouselItem> 
                             })}
                         </CarouselContent>
@@ -71,8 +98,8 @@ const UploadImageDialog = ({conversationId, open, setOpen}: Props) => {
                 <AlertDialogCancel>
                     Cancel
                 </AlertDialogCancel>
-                <AlertDialogAction>
-                    Delete
+                <AlertDialogAction disabled={selected?.length === 0 || pending} onClick={handleSendImage}>
+                    Send
                 </AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
